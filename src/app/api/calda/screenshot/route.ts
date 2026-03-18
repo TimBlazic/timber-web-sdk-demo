@@ -1,0 +1,41 @@
+import { chromium } from "playwright";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function POST(req: NextRequest) {
+  const { url, headHtml, bodyHtml, width, height, deviceScaleFactor } = await req.json();
+
+  if (!url || !bodyHtml) {
+    return NextResponse.json(
+      { error: "url and bodyHtml are required" },
+      { status: 400 }
+    );
+  }
+
+  let browser;
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({
+      viewport: { width: width || 1440, height: height || 900 },
+      deviceScaleFactor: deviceScaleFactor || 2,
+    });
+    const page = await context.newPage();
+
+    // Include collected CSS from the SDK in the <head>
+    const fullHtml = `<!DOCTYPE html><html><head><base href="${url}">${headHtml || ""}</head><body>${bodyHtml}</body></html>`;
+    await page.setContent(fullHtml, { waitUntil: "networkidle" });
+
+    const screenshot = await page.screenshot({ type: "png", fullPage: false });
+    await browser.close();
+
+    return new NextResponse(screenshot, {
+      headers: { "Content-Type": "image/png" },
+    });
+  } catch (err) {
+    if (browser) await browser.close();
+    console.error("Screenshot error:", err);
+    return NextResponse.json(
+      { error: "Screenshot failed" },
+      { status: 500 }
+    );
+  }
+}
