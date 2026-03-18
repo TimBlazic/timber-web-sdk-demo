@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["playwright"],
-  transpilePackages: ["calda-feedback-sdk"],
+  transpilePackages: ["timber-feedback-sdk"],
 };
 
 export default nextConfig;
