@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Timber Demo",
-  description: "Timber SDK Demo Application",
+  title: "Timber Demo App",
+  description: "Timber Demo App",
 };
 
 export default function RootLayout({
