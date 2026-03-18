@@ -9,7 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "calda-feedback-sdk": "file:../timber-web-sdk/calda-feedback-sdk-0.1.0.tgz",
+    "calda-feedback-sdk": "github:Justin-Beavers-Dev/timber-web-sdk",
     "next": "16.1.6",
     "playwright": "^1.58.2",
     "react": "19.2.3",
