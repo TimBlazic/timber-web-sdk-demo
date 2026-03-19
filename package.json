@@ -9,11 +9,12 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "timber-feedback-sdk": "github:Justin-Beavers-Dev/timber-web-sdk",
+    "@sparticuz/chromium": "^143.0.4",
     "next": "16.1.6",
-    "playwright": "^1.58.2",
+    "playwright-core": "^1.58.2",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "timber-feedback-sdk": "github:Justin-Beavers-Dev/timber-web-sdk"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

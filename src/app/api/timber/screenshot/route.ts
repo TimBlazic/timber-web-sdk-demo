@@ -1,7 +1,9 @@
-import { chromium } from "playwright";
 import { NextRequest, NextResponse } from "next/server";
+import chromium from "@sparticuz/chromium";
+import { chromium as playwrightChromium } from "playwright-core";
 
 export const runtime = "nodejs";
+export const maxDuration = 30;
 
 export async function POST(req: NextRequest) {
   const { url, headHtml, bodyHtml, width, height, deviceScaleFactor } =
@@ -10,13 +12,20 @@ export async function POST(req: NextRequest) {
   if (!url || !bodyHtml) {
     return NextResponse.json(
       { error: "url and bodyHtml are required" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   let browser;
   try {
-    browser = await chromium.launch({ headless: true });
+    browser = await playwrightChromium.launch({
+      args: chromium.args,
+      executablePath:
+        process.env.NODE_ENV === "development"
+          ? undefined
+          : await chromium.executablePath(),
+      headless: true,
+    });
 
     const context = await browser.newContext({
       viewport: { width: width || 1440, height: height || 900 },
@@ -49,10 +58,9 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     console.error("Screenshot error:", err);
-
     return NextResponse.json(
       { error: "Screenshot failed" },
-      { status: 500 }
+      { status: 500 },
     );
   } finally {
     if (browser) {
