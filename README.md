@@ -10,7 +10,7 @@ Reference implementation showing how to integrate the [Timber Web SDK](https://g
 - Playwright (for server-side screenshot rendering)
 - [calda-feedback-sdk](https://github.com/Justin-Beavers-Dev/timber-web-sdk) (Timber Web SDK)
 
-## Getting Started
+## Getting Started!
 
 ```bash
 npm install
