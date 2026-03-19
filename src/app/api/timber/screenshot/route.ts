@@ -26,14 +26,21 @@ export async function POST(req: NextRequest) {
       ? undefined
       : await chromium.executablePath(CHROMIUM_PACK_URL);
 
+    const prodArgs = chromium.args.filter(
+      (arg: string) => !arg.startsWith("--headless"),
+    );
+
     browser = await playwrightChromium.launch({
-      args: isDev ? [] : chromium.args,
+      args: isDev ? [] : prodArgs,
       executablePath,
       headless: true,
     });
 
+    const vw = width || 1440;
+    const vh = height || 900;
+
     const context = await browser.newContext({
-      viewport: { width: width || 1440, height: height || 900 },
+      viewport: { width: vw, height: vh },
       deviceScaleFactor: deviceScaleFactor || 2,
     });
 
@@ -44,7 +51,7 @@ export async function POST(req: NextRequest) {
   <head>
     <base href="${url}">
     ${headHtml || ""}
-    <style>html, body { margin: 0; padding: 0; }</style>
+    <style>html, body { margin: 0; padding: 0; min-width: ${vw}px; min-height: ${vh}px; }</style>
   </head>
   <body>${bodyHtml}</body>
 </html>`;
@@ -53,7 +60,7 @@ export async function POST(req: NextRequest) {
 
     const screenshot = await page.screenshot({
       type: "png",
-      fullPage: true,
+      clip: { x: 0, y: 0, width: vw, height: vh },
     });
 
     return new Response(new Uint8Array(screenshot), {
