@@ -43,25 +43,16 @@ export async function POST(req: NextRequest) {
 
     const page = await context.newPage();
 
-    const fullHtml = `<!DOCTYPE html>
-<html>
-  <head>
-    <base href="${url}">
-    ${headHtml || ""}
-    <style>html, body { margin: 0; padding: 0; }</style>
-  </head>
-  <body>${bodyHtml}</body>
-</html>`;
+    await page.goto(url, { waitUntil: "networkidle", timeout: 15000 });
 
-    await page.setContent(fullHtml, { waitUntil: "networkidle" });
+    await page.evaluate((html) => {
+      document.querySelectorAll("[data-timber-root]").forEach((el) =>
+        el.remove(),
+      );
+      document.body.innerHTML = html;
+    }, bodyHtml);
 
-    const actual = await page.evaluate(() => ({
-      iw: window.innerWidth,
-      ih: window.innerHeight,
-      bw: document.body.clientWidth,
-      bh: document.body.clientHeight,
-      dpr: window.devicePixelRatio,
-    }));
+    await page.waitForLoadState("networkidle");
 
     const screenshot = await page.screenshot({
       type: "png",
@@ -72,9 +63,6 @@ export async function POST(req: NextRequest) {
       headers: {
         "Content-Type": "image/png",
         "Cache-Control": "no-store",
-        "X-Requested": `${vw}x${vh}@${dpr}`,
-        "X-Actual-Viewport": `${actual.iw}x${actual.ih}@${actual.dpr}`,
-        "X-Actual-Body": `${actual.bw}x${actual.bh}`,
       },
     });
   } catch (err) {
