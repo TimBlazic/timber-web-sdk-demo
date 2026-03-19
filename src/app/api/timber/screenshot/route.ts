@@ -26,9 +26,18 @@ export async function POST(req: NextRequest) {
       ? undefined
       : await chromium.executablePath(CHROMIUM_PACK_URL);
 
-    const prodArgs = chromium.args.filter(
-      (arg: string) => !arg.startsWith("--headless"),
-    );
+    const vw = width || 1440;
+    const vh = height || 900;
+    const dpr = deviceScaleFactor || 2;
+
+    const prodArgs = [
+      ...chromium.args.filter(
+        (arg: string) =>
+          !arg.startsWith("--headless") &&
+          !arg.startsWith("--window-size"),
+      ),
+      `--window-size=${vw},${vh}`,
+    ];
 
     browser = await playwrightChromium.launch({
       args: isDev ? [] : prodArgs,
@@ -36,12 +45,9 @@ export async function POST(req: NextRequest) {
       headless: true,
     });
 
-    const vw = width || 1440;
-    const vh = height || 900;
-
     const context = await browser.newContext({
       viewport: { width: vw, height: vh },
-      deviceScaleFactor: deviceScaleFactor || 2,
+      deviceScaleFactor: dpr,
     });
 
     const page = await context.newPage();
@@ -51,16 +57,17 @@ export async function POST(req: NextRequest) {
   <head>
     <base href="${url}">
     ${headHtml || ""}
-    <style>html, body { margin: 0; padding: 0; min-width: ${vw}px; min-height: ${vh}px; }</style>
+    <style>html, body { margin: 0 !important; padding: 0 !important; width: ${vw}px !important; height: ${vh}px !important; overflow: hidden; }</style>
   </head>
   <body>${bodyHtml}</body>
 </html>`;
 
     await page.setContent(fullHtml, { waitUntil: "networkidle" });
+    await page.setViewportSize({ width: vw, height: vh });
 
     const screenshot = await page.screenshot({
       type: "png",
-      clip: { x: 0, y: 0, width: vw, height: vh },
+      fullPage: false,
     });
 
     return new Response(new Uint8Array(screenshot), {
