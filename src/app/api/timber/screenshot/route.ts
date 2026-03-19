@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     const screenshot = await page.screenshot({ type: "png", fullPage: false });
     await browser.close();
 
-    return new NextResponse(screenshot, {
+    return new NextResponse(new Uint8Array(screenshot), {
       headers: { "Content-Type": "image/png" },
     });
   } catch (err) {
