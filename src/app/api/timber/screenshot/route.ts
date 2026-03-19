@@ -56,13 +56,18 @@ export async function POST(req: NextRequest) {
 
     const screenshot = await page.screenshot({
       type: "png",
-      fullPage: false,
+      clip: { x: 0, y: 0, width: vw, height: vh },
     });
+
+    const pngWidth = screenshot.readUInt32BE(16);
+    const pngHeight = screenshot.readUInt32BE(20);
 
     return new Response(new Uint8Array(screenshot), {
       headers: {
         "Content-Type": "image/png",
         "Cache-Control": "no-store",
+        "X-Screenshot-Pixels": `${pngWidth}x${pngHeight}`,
+        "X-Expected-Pixels": `${vw * dpr}x${vh * dpr}`,
       },
     });
   } catch (err) {
