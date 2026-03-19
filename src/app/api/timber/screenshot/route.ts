@@ -30,15 +30,10 @@ export async function POST(req: NextRequest) {
     const vh = height || 900;
     const dpr = deviceScaleFactor || 2;
 
-    const prodArgs = chromium.args.filter(
-      (arg: string) => !arg.startsWith("--headless"),
-    );
-
     browser = await playwrightChromium.launch({
-      args: isDev ? [] : prodArgs,
+      args: isDev ? [] : chromium.args,
       executablePath,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      headless: isDev ? true : ("shell" as any),
+      headless: true,
     });
 
     const context = await browser.newContext({
@@ -60,6 +55,14 @@ export async function POST(req: NextRequest) {
 
     await page.setContent(fullHtml, { waitUntil: "networkidle" });
 
+    const actual = await page.evaluate(() => ({
+      iw: window.innerWidth,
+      ih: window.innerHeight,
+      bw: document.body.clientWidth,
+      bh: document.body.clientHeight,
+      dpr: window.devicePixelRatio,
+    }));
+
     const screenshot = await page.screenshot({
       type: "png",
       fullPage: false,
@@ -69,6 +72,9 @@ export async function POST(req: NextRequest) {
       headers: {
         "Content-Type": "image/png",
         "Cache-Control": "no-store",
+        "X-Requested": `${vw}x${vh}@${dpr}`,
+        "X-Actual-Viewport": `${actual.iw}x${actual.ih}@${actual.dpr}`,
+        "X-Actual-Body": `${actual.bw}x${actual.bh}`,
       },
     });
   } catch (err) {
