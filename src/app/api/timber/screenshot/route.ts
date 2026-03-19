@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 export const maxDuration = 30;
 
 const CHROMIUM_PACK_URL =
-  "https://github.com/nichochar/chromium-for-lambda/releases/download/v143.0.0/chromium-v143.0.0-pack.tar";
+  "https://github.com/Sparticuz/chromium/releases/download/v143.0.4/chromium-v143.0.4-pack.x64.tar";
 
 export async function POST(req: NextRequest) {
   const { url, headHtml, bodyHtml, width, height, deviceScaleFactor } =
