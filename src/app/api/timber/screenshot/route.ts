@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import chromium from "@sparticuz/chromium";
+import chromium from "@sparticuz/chromium-min";
 import { chromium as playwrightChromium } from "playwright-core";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
+
+const CHROMIUM_PACK_URL =
+  "https://github.com/nichochar/chromium-for-lambda/releases/download/v143.0.0/chromium-v143.0.0-pack.tar";
 
 export async function POST(req: NextRequest) {
   const { url, headHtml, bodyHtml, width, height, deviceScaleFactor } =
@@ -18,12 +21,14 @@ export async function POST(req: NextRequest) {
 
   let browser;
   try {
+    const executablePath =
+      process.env.NODE_ENV === "development"
+        ? undefined
+        : await chromium.executablePath(CHROMIUM_PACK_URL);
+
     browser = await playwrightChromium.launch({
       args: chromium.args,
-      executablePath:
-        process.env.NODE_ENV === "development"
-          ? undefined
-          : await chromium.executablePath(),
+      executablePath,
       headless: true,
     });
 
