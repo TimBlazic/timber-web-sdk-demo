@@ -21,13 +21,13 @@ export async function POST(req: NextRequest) {
 
   let browser;
   try {
-    const executablePath =
-      process.env.NODE_ENV === "development"
-        ? undefined
-        : await chromium.executablePath(CHROMIUM_PACK_URL);
+    const isDev = process.env.NODE_ENV === "development";
+    const executablePath = isDev
+      ? undefined
+      : await chromium.executablePath(CHROMIUM_PACK_URL);
 
     browser = await playwrightChromium.launch({
-      args: chromium.args,
+      args: isDev ? [] : chromium.args,
       executablePath,
       headless: true,
     });
@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
   <head>
     <base href="${url}">
     ${headHtml || ""}
+    <style>html, body { margin: 0; padding: 0; }</style>
   </head>
   <body>${bodyHtml}</body>
 </html>`;
@@ -52,7 +53,7 @@ export async function POST(req: NextRequest) {
 
     const screenshot = await page.screenshot({
       type: "png",
-      fullPage: false,
+      fullPage: true,
     });
 
     return new Response(new Uint8Array(screenshot), {
