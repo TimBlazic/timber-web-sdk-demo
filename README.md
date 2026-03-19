@@ -1,4 +1,4 @@
-# Timber SDK Demo App!
+# Timber SDK Demo App
 
 Reference implementation showing how to integrate the [Timber Web SDK](https://github.com/Justin-Beavers-Dev/timber-web-sdk) into a Next.js application.
 
