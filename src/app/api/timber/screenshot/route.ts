@@ -30,19 +30,15 @@ export async function POST(req: NextRequest) {
     const vh = height || 900;
     const dpr = deviceScaleFactor || 2;
 
-    const prodArgs = [
-      ...chromium.args.filter(
-        (arg: string) =>
-          !arg.startsWith("--headless") &&
-          !arg.startsWith("--window-size"),
-      ),
-      `--window-size=${vw},${vh}`,
-    ];
+    const prodArgs = chromium.args.filter(
+      (arg: string) => !arg.startsWith("--headless"),
+    );
 
     browser = await playwrightChromium.launch({
       args: isDev ? [] : prodArgs,
       executablePath,
-      headless: true,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      headless: isDev ? true : ("shell" as any),
     });
 
     const context = await browser.newContext({
@@ -57,13 +53,12 @@ export async function POST(req: NextRequest) {
   <head>
     <base href="${url}">
     ${headHtml || ""}
-    <style>html, body { margin: 0 !important; padding: 0 !important; width: ${vw}px !important; height: ${vh}px !important; overflow: hidden; }</style>
+    <style>html, body { margin: 0; padding: 0; }</style>
   </head>
   <body>${bodyHtml}</body>
 </html>`;
 
     await page.setContent(fullHtml, { waitUntil: "networkidle" });
-    await page.setViewportSize({ width: vw, height: vh });
 
     const screenshot = await page.screenshot({
       type: "png",
