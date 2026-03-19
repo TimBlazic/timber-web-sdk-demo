@@ -31,75 +31,54 @@ export default function Home() {
         style={{ background: "linear-gradient(to bottom, transparent, #bac6fb, transparent)" }}
       />
 
-      {/* Main card */}
-      <div className="w-full max-w-[658px] rounded-2xl border border-[#bac6fb] p-2.5">
-        {/* Product illustration area */}
-        <div className="flex flex-col items-center rounded-2xl bg-white px-8 pb-10 pt-12">
-          {/* Avatars with speech bubbles */}
-          <div className="relative mb-8 flex items-end justify-center">
-            {/* "Thanks!" bubble */}
-            <div className="absolute -left-16 top-1 z-10 rounded-full border border-[#e2e8f0] bg-white px-3 py-1 text-xs font-medium text-[#64748b] shadow-sm">
-              Thanks!
+      <div className="w-full max-w-[540px] rounded-xl border border-[#d6e6ff] p-2.5">
+        <div className="flex items-center justify-center rounded-xl bg-white px-2.5 py-10">
+          <div className="flex w-[342px] flex-col items-center gap-11">
+            <div className="flex w-full flex-col items-center gap-6">
+              <img
+                src="/peoples.png"
+                alt="People chatting"
+                className="h-[72px] object-contain"
+              />
+
+              <div className="flex w-full flex-col items-center gap-3">
+                <h1 className="text-[30px] leading-none text-[#0f172a]">
+                  Enter Invite Code
+                </h1>
+                <p className="text-center text-sm leading-5 text-[#0f172a]">
+                  Only invited users can access the product.
+                  <br />
+                  Enter your code to continue.
+                </p>
+              </div>
             </div>
 
-            {/* Avatar 1 */}
-            <div className="relative z-10 flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-[#93b4f8] bg-[#dbeafe]">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="8" r="4" fill="#93b4f8" />
-                <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="#93b4f8" />
-              </svg>
+            <div className="flex w-full flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="invite-code"
+                  className="pl-1 text-sm font-medium text-[#111827]"
+                >
+                  Enter code
+                </label>
+                <input
+                  id="invite-code"
+                  type="text"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleVerify()}
+                  placeholder="Enter the code you received"
+                  className="h-12 w-full rounded-xl border border-[#e5e7eb] bg-white px-3 text-sm text-[#0f172a] shadow-sm outline-none placeholder:text-[#9ca3af] focus:border-[#93b4f8] focus:ring-2 focus:ring-[#93b4f8]/20"
+                />
+              </div>
+              <button
+                onClick={handleVerify}
+                disabled={!code.trim() || isVerifying}
+                className="h-11 w-full rounded-lg bg-[#0f172a] text-sm font-medium text-[#f8fafc] transition-colors enabled:hover:bg-[#1e293b] disabled:opacity-20"
+              >
+                {isVerifying ? "Verifying..." : "Verify"}
+              </button>
             </div>
-
-            {/* Avatar 2 */}
-            <div className="relative -ml-3 z-0 flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-[#f5d0b0] bg-[#fef3c7]">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="8" r="4" fill="#f5d0b0" />
-                <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="#f5d0b0" />
-              </svg>
-            </div>
-
-            {/* "Love it!" bubble */}
-            <div className="absolute -right-14 -top-1 z-10 rounded-full border border-[#e2e8f0] bg-white px-3 py-1 text-xs font-medium text-[#7c3aed] shadow-sm">
-              Love it!
-            </div>
-          </div>
-
-          {/* Heading */}
-          <h1 className="mb-2 text-xl font-bold tracking-tight text-[#0f172a]">
-            Enter Invite Code
-          </h1>
-
-          {/* Subtitle */}
-          <p className="mb-8 max-w-xs text-center text-sm leading-5 text-[#64748b]">
-            Only invited users can access the product.
-            <br />
-            Enter your code to continue
-          </p>
-
-          {/* Form */}
-          <div className="w-full max-w-sm">
-            <label
-              htmlFor="invite-code"
-              className="mb-1.5 block text-xs font-medium text-[#64748b]"
-            >
-              Enter code
-            </label>
-            <input
-              id="invite-code"
-              type="text"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleVerify()}
-              placeholder="Ex: Pw66+34"
-              className="mb-3 h-11 w-full rounded-lg border border-[#e2e8f0] bg-white px-3.5 text-sm text-[#0f172a] outline-none placeholder:text-[#cbd5e1] focus:border-[#93b4f8] focus:ring-2 focus:ring-[#93b4f8]/20"
-            />
-            <button
-              onClick={handleVerify}
-              disabled={!code.trim() || isVerifying}
-              className="h-11 w-full rounded-lg bg-[#e2e8f0] text-sm font-medium text-[#94a3b8] transition-all hover:bg-[#cbd5e1] hover:text-[#64748b] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isVerifying ? "Verifying..." : "Verify Now"}
-            </button>
           </div>
         </div>
       </div>
